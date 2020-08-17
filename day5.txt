@@ -1,0 +1,617 @@
+50q  :   20 oracle , 30 java  mcq
+declare
+eno number(4):=1100;
+ename varchar2(20) :='Vaibhav';
+doj date:='1-aug-20';
+begin
+ dbms_output.put_line('the empno is : ' || eno  || ' ename is ' || ename );
+ dbms_output.put_line('the name  is : ' || ename);
+ dbms_output.put_line('the doj is : ' || doj);
+end;
+
+--
+insert : 3 ways
+view
+index
+
+-------------
+declare
+fname varchar2(20) :='Vaibhav';
+lname varchar2(20) :='Pandey';
+begin
+ dbms_output.put_line(fname || ' ' ||lname);
+end;
+
+---insert : 3 ways
+--1
+insert into dept1 values(50,'sales','delhi');
+
+create table student1(
+name varchar2(20),
+roll number(2),
+marks number(10,2));
+
+--2
+--20 cols	: 10 cols
+insert into student1 (roll, name ) values(1,'anu');
+select * from student1;
+
+
+--3
+insert into student1 values('&name', &roll, &marks);
+
+
+
+-view
+logical table / virtual table
+the records not stored in the view
+view based on the table
+when v insert , update, delete the records from the view , it will be insert , update, delete the records from the table.
+it is used for security purpose
+
+--emp 50 cols		: 4000 rec
+
+
+vaibhav -----------------> emp 50 cols		: 4000 rec
+sal . 120000
+ 
+--1
+create view v1
+as
+select 	empno, ename , job from emp;
+
+--
+select * from v1;
+
+
+user  hr 		vaibhav
+      v1--------------->
+grant select on v1 to vaibhav;
+
+
+--eg create a view with cols : empno, ename, sal, hiredate, 
+sal > 1000
+
+create view v2
+as
+select 	 empno, ename, sal, hiredate from emp
+where sal > 1000;
+
+select * from v2;
+
+insert into v2 values(111,'priti', 3000, '1-jan-20');
+update...
+delete ...
+
+select * from v2;
+select * from emp;  ---------> priti
+
+drop view v2;
+
+
+                            emp			: will have the records
+                             ^
+			     |
+                             |
+			     v2	, v1		: empty box, no records
+
+
+
+
+--database objects
+1 table  .............done
+2 view		..done
+3 index	        --done
+4 synonym
+5 sequence
+
+--index
+the data is physically sorted in an index file
+where caluse use the index
+searching is faster using index
+for a pk , uk col index is automatically created 
+extension : .idx
+
+-why
+eg : 
+
+index page
+contact list   : indexed
+dictionary ........
+
+
+emp		table
+empno		enmae..................
+300		pr
+40		f
+600		eee
+1		m
+50		gg
+..
+..
+...
+rec : 200(no of records =200)
+
+search empno 40    : search : 200
+select * from emp where empno=40;
+
+--using index
+empno_id		
+empno		ename
+1		klk
+2		lklk
+3		lkl
+4		lkl
+5		lll
+..
+..
+200
+
+select * from emp where empno=40;
+search : 40
+
+
+--eg
+create index ename_id on emp(ename);
+select * from emp where ename ='priti';
+
+create index comm_id on emp(comm desc);
+
+select * from emp where ename ='priti' and comm is not null;
+                              1                 2   
+
+drop index comm_id ;
+
+--craete a index on sal desc
+create index sal_id on emp(sal desc);
+
+
+--indexing on multiple cols (composite index)
+create index sal_hire on emp(sal, hiredate);
+
+-------------------------------------------------------------
+
+--%type
+vsal emp.sal%type;
+ var  T.col
+
+vcomm emp.comm%type;
+vename emp.ename%type;
+
+
+
+--store the sal for smith, display the sal for smith, using pl slq block
+
+declare
+vsal emp.sal%type;
+begin
+   select sal into vsal from emp where ename ='SMITH';
+   dbms_output.put_line('the sal is : ' ||vsal);
+end;
+
+vsal emp.sal%type;
+ var  T.col
+
+--the datatype will be automatically assigned
+
+--store the sal ,comm, job for smith, display the sal, comm, job for smith, using pl slq block
+using %type
+
+--
+declare  
+vsal emp.sal%type;  
+vcomm emp.comm%type;  
+vjob emp.job%type;  
+begin  
+select sal, comm, job into vsal, vcomm, vjob from emp where ename='SMITH';  
+dbms_output.put_line('The sal is ' ||vsal);  
+dbms_output.put_line('The comm is ' ||vcomm);  
+dbms_output.put_line('The job is ' ||vjob);  
+end;  
+/
+
+
+--datatype
+%rowtype
+stores the entire row of a table 
+
+vrec emp%rowtype;
+v    T
+
+vdep   dept%rowtype;
+
+--using %rowtype display sal, comm, hiredate, deptno, job, empno for smith
+ 
+declare  
+vrec emp%rowtype;
+begin  
+select * into vrec from emp where ename='SMITH';  
+dbms_output.put_line('The sal is ' || vrec.sal);  
+dbms_output.put_line('The comm is ' || vrec.comm);  
+dbms_output.put_line('The job is ' || vrec.job);  
+dbms_output.put_line('The hiredate is ' || vrec.hiredate);  
+dbms_output.put_line('The deptno is ' || vrec.deptno);  
+dbms_output.put_line('The empno is ' || vrec.empno);  
+end; 
+
+
+--diff in %type and %rowtype
+%type: stores 1 value
+%rowtype : stores multiple values, stores entire row
+
+
+--if condition
+if cond then
+..
+..
+end if;
+
+
+--2
+if cond then
+..
+..
+else
+..
+..
+end if;
+
+--3
+if cond then
+..
+..
+elsif cond2 then
+..
+..
+elsif cond3 then
+..
+..
+else
+..
+..
+end if;
+
+
+--eg  check the sal for ALLEN, store in variable , if > 2000 display "good sal" else
+displya "bad sal"
+
+declare
+vsal emp.sal%type;
+begin
+   select sal into vsal from emp where ename='ALLEN';
+   if vsal>2000 then
+        dbms_output.put_line('good salary !!!!!!!!!');
+   else 
+	dbms_output.put_line('bad salary !!!!!!!!!');
+   end if;
+end;
+
+--
+--eg  check the sal for ALLEN, store in variable 
+
+>=5000		excellent sal
+<5000	>=4000	good sal
+<4000   >=2000  avg sal
+else  		bad sal
+
+declare
+vsal emp.sal%type;
+begin
+   select sal into vsal from emp where ename='ALLEN';
+   if vsal>=5000 then
+        dbms_output.put_line('excellent salary !!!!!!!!!');
+   elsif (vsal<5000 and vsal>=4000) then
+	dbms_output.put_line('good salary !!!!!!!!!');
+   elsif (vsal<4000 and vsal>=2000) then
+	dbms_output.put_line('avg salary !!!!!!!!!');
+   else
+	dbms_output.put_line('bad salary !!!!!!!!!');
+   end if;
+end;
+
+--OR
+declare
+vsal emp.sal%type;
+begin
+   select sal into vsal from emp where ename='ALLEN';
+   if vsal>=5000 then
+        dbms_output.put_line('excellent salary !!!!!!!!!');
+   elsif (vsal between 4999 and 4000) then
+	dbms_output.put_line('good salary !!!!!!!!!');
+   elsif (vsal between 3999 and 2000) then
+	dbms_output.put_line('avg salary !!!!!!!!!');
+   else
+	dbms_output.put_line('bad salary !!!!!!!!!');
+   end if;
+end;
+
+
+---assignment :
+accept percentage from the user , display the grade
+
+>=80		: distinction
+<80  >=60	: first class
+<60  >=50	: second class
+<50  >=35	: pass class
+else
+"better luck next time !!!!!!!!!!!!!!!"
+
+---------------------------------------------------------------------
+
+blocks:
+1. Anonymous block
+	no name is present
+	no reusability of the code
+	used only once
+
+2. named block
+	name is there 
+	functions(UDF), stored functions, trigger
+	reusability of the code
+	
+	
+--
+declare
+vsal emp.sal%type;
+begin
+   select sal into vsal from emp where ename='ALLEN';
+   if vsal>=5000 then
+        dbms_output.put_line('excellent salary !!!!!!!!!');
+   elsif (vsal between 4999 and 4000) then
+	dbms_output.put_line('good salary !!!!!!!!!');
+   elsif (vsal between 3999 and 2000) then
+	dbms_output.put_line('avg salary !!!!!!!!!');
+   else
+	dbms_output.put_line('bad salary !!!!!!!!!');
+   end if;
+end;
+
+
+--stored procedure
+It is used to process the data, 
+dql, dml are allowed
+
+--eg
+create or replace procedure proce1
+as
+vsal emp.sal%type;
+begin
+   select sal into vsal from emp where ename='ALLEN';
+   if vsal>=5000 then
+        dbms_output.put_line('excellent salary !!!!!!!!!');
+   elsif (vsal between 4999 and 4000) then
+	dbms_output.put_line('good salary !!!!!!!!!');
+   elsif (vsal between 3999 and 2000) then
+	dbms_output.put_line('avg salary !!!!!!!!!');
+   else
+	dbms_output.put_line('bad salary !!!!!!!!!');
+   end if;
+end;
+
+--to exe
+exec proce1 
+or
+execute proce1
+
+--create a procedure for the foll
+check the sal for allen , if it is < 2000, update the sal , increase the sal by 500.
+
+create or replace procedure proce_up
+as
+vsal emp.sal%type;
+begin 
+  select sal into vsal from emp where ename ='ALLEN';
+  if vsal < 2000 then
+        update emp set sal =sal+ 500 where ename ='ALLEN';
+        dbms_output.put_line('the salary is updated !!!!!');
+  else
+	dbms_output.put_line('the salary is not updated !!!!!');
+  endif;
+end;
+
+
+--
+exec  proce_up
+
+--buffer file
+afiedt.buf
+
+insert into emp (empno, ename, sal )values(111, 'atul', 7000);
+
+--create a procedure , for the foll
+check the sal , if the sal > 6000, delete the records .
+
+
+create or replace procedure proce_del
+as
+vsal emp.sal%type;
+begin
+   select sal into vsal from emp where sal > 2000;  --1
+   if vsal > 2000 then
+      delete from emp where sal > 2000  ;
+   end if;
+   if vsal > 3000 then
+      update emp set sal =sal+ 1000  where sal > 3000 ;
+   end if;
+   if vsal > 4000 then
+      update emp set sal =sal+ 2000  where sal > 4000 ;
+   end if;
+end;
+/
+
+--work
+delete from emp where sal > 2000  ;
+
+--accept the name then check the sal , if < 2000, then increase the sal by 500
+
+--parameters
+1 in		: input
+2 out		: output
+3 in out	: input + output
+
+
+create or replace procedure proce_in(pename in varchar2)
+as
+vsal emp.sal%type;
+begin 
+  select sal into vsal from emp where ename =pename;
+  if vsal < 2000 then
+        update emp set sal =sal+ 500 where ename =pename;
+        dbms_output.put_line('the salary is updated !!!!!');
+  else
+	dbms_output.put_line('the salary is not updated !!!!!');
+  end if;
+end;
+
+--
+exec proce_in('WARD')
+exec proce_in('MARTIN')
+
+--out parameter : procedure is retuning a value
+eg : accept a deptno from the user and return the tot sal 
+i/p : 10
+o/p : 29898
+
+create or replace procedure out_demo2(pdno in number, ptot out number, pmin out number)
+as
+begin
+   select sum(sal) , min(sal) into ptot , pmin from emp where deptno=pdno;
+end;
+
+-- to exe
+declare
+ ptot number(10,2);
+ pmin number(10,2);
+begin
+ out_demo2(10, ptot, pmin);  
+ dbms_output.put_line('the total sal is :  '|| ptot);
+ dbms_output.put_line('the min sal is  : '|| pmin);
+end;
+
+--accept a empno from the user and return the sal, comm and the net sal of the same emp using procedure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

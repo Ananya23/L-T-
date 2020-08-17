@@ -1,0 +1,882 @@
+q32, 19, 31, 33, 34, 40 ,24, 35-37, 23, 28
+
+--pan : shart with p
+create table cust2(
+custname varchar2(20),
+city varchar2(15)  
+constraint city_ck1 check(city in ('pune','mum','nasik')),
+pan varchar2(20) constraint pan_ck2 check(pan like 'p%'), 
+add1 varchar2(20));
+
+--subquery
+query with in the query is called as subquery
+
+		Q1(Q2)
+	Q1 : outer query
+	Q2 : inner query  : subquery
+
+inner query is executed first, which will pass the values to the outer query
+
+--eg
+--display the names all the emp, doing the same job as that of smith
+select ename from emp where job=
+(select job from emp 
+where ename ='SMITH')
+and ename!='SMITH'
+
+--eg : display name the of emp working in DALLAS city
+select ename, deptno from emp where deptno=
+(select deptno from dept where loc='DALLAS');
+
+--eg : display name the of emp working in research department 
+select ename from emp where deptno=(select deptno from dept where dname='RESEARCH');
+
+
+--eg : display name the of emp working in sales department 
+select ename from emp where deptno=(select deptno from dept where dname='SALES');
+
+--eg : display name the of emp doing the same job as that of smith and ward
+Q1(Q2)
+q1 : emp
+q2 : emp
+select ename from emp where deptno in
+(select deptno from emp where ename in ('SMITH', 'WARD'))
+
+single value return : use =
+multiple value return : use " in "
+
+--eg : display name the of emp working in research department  and sales department  
+select ename from emp where deptno in (select deptno from dept where dname in ('SALES','RESEARCH'));
+
+--eg : display name the of emp not working in research department  and sales department  
+--not in 
+select ename, job from emp where deptno not in (select deptno from dept where dname in ('SALES','RESEARCH'));
+
+-dispaly the name of the emp from deptno 10 or 20
+select ename from emp where deptno in (10,20);
+
+--co related subquery
+it is a subquery which is related to itself
+we will be using the same table 2 times
+there should be 2 cols which are related in a table , then only the co related subquery can be performed 
+it takes time to execute the co related subquery (slow )
+in co related subquery, there will 2 copies created for the same table
+if there is no 2 cols which are related in a table, co related subquery can not be performed.
+co related subquery, can not be written for all the tables.
+
+--eg display the name the emp , who are senior to their managers
+mgr cols takes value which r present in empno
+
+smith	17-DEC-80 ford 		03-DEC-81	y
+allen 	20-FEB-81 blake		01-MAY-81	y		
+
+q1(q2)
+emp(emp)
+
+select a.ename from emp a
+where a.hiredate < (select b.hiredate from emp b
+where b.empno=a.mgr)
+
+a, b 	---. alias
+
+
+emp a		: 14
+emp b		: 14
+
+A					B
+14				        14
+14 times  : evaluation of the query 
+slow
+
+
+--join
+--why ? 
+to get information from mutiple tables (2 or more tables)
+academic , score
+ t1      , t2
+
+e	e	d	d
+ename 	sal 	dname	loc
+smith	800	acct	dallas
+allen	1600	fin	new york
+
+--types of joins
+1 cartetian join / cross join 
+2 inner join / natual join / equi join
+3 self join
+4 outer join
+	left  outer join
+	right  outer join
+	full  outer join
+5 non equi join 
+
+== cartetian join / cross join 
+t1   : row: 2 col: 2	
+c1	c2
+10	a
+20	b
+
+t2   row: 3 col: 3	
+c3	c4	c5
+1	p	111
+2	q	222
+3	r	333
+
+o/p
+c1	c2	c3	c4	c5
+10	a	1	p	111
+10	a	2	q	222
+10 	a	3	r	333
+20	b	1	p	111
+20	b	2	q	222
+20 	b	3	r	333
+
+row : *  : 2*3 =6
+cols : + : 2+3=5
+
+--eg
+emp col : 8 row: 14
+dept col : 3 row: 4
+o/p : col :11  row: 56
+
+--eg : o/p : col :11  row: 56
+select * from emp
+cross join
+dept;
+
+--eg 2
+select ename, sal,dname, loc from emp
+cross join
+dept 
+where sal > 1000 and comm is not null  ;
+
+--
+1	20
+2	20
+3	20
+
+--inner join  : 
+--will display the common records
+
+ename 	sal 	dname	loc
+smith	800	acct	dallas
+allen	1600	fin	new york
+
+emp : 10, 20, 30 
+dept : 10, 20, 30, 40
+
+--eg
+select ename , sal , dname , loc
+from emp e, dept d
+where e.deptno=d.deptno;
+
+e, d : alias
+
+--eg
+select ename , sal , dname , loc, emp.deptno
+from emp, dept
+where emp.deptno=dept.deptno;
+
+--or
+select ename , sal , dname , loc, e.deptno
+from emp e, dept d
+where e.deptno=d.deptno;
+
+--eg
+select ename , sal , dname , loc, e.deptno
+from emp e, dept d
+where e.deptno=d.deptno and sal > 2000 and comm is null
+and e.deptno in (10,20)
+
+--display the ename , job, comm , loc for all the emp using inner join
+select ename , job, comm , loc
+from emp e, dept d
+where e.deptno=d.deptno;
+
+--left outer join 
+all the details from the left table will be displayed
+emp : 10, 20, 30 
+dept : 10, 20, 30, 40
+
+--eg  :  14
+select ename , job, dname , loc 
+from emp e
+left outer join 
+dept d
+on (e.deptno=d.deptno);
+
+--14
+select ename , job, dname , loc, e.deptno
+from emp e
+left outer join 
+dept d
+on (e.deptno=d.deptno);
+
+--right outer join : 15 rec
+select ename , job, dname , loc, d.deptno
+from emp e
+right outer join 
+dept d
+on (e.deptno=d.deptno);
+
+--we can expect null values in outer join
+
+--full outer join  : 15 rec
+select ename , job, dname , loc, d.deptno
+from emp e
+full outer join 
+dept d
+on (e.deptno=d.deptno);
+
+--eg
+emp : active		 2000
+ename
+sal 
+..
+..
+
+
+ret_emp : retired 	300
+ename
+..
+...
+ 2000 + 100 + 300 =2400
+ active+ dues  + ret = total emp
+
+common : instersection	: 100 rec : dues not cleared 
+total emp = 2000 + 300 + 100 =2400
+
+--display the name emp who are active and dues not cleared 
+left outer join  : 2000 + 100 =2100
+
+--display the name emp who  dues not cleared  and who are retired from the comp
+right outer join  : 300+ 100 = 400
+
+--event : u need invite all the emp
+full outer join  : 2000 + 300 + 100 =2400
+
+--dues not cleared 
+inner join : 100
+
+--self join
+joining the table with itself is called as self join 
+we will be using the same table 2 times
+there should be 2 cols which are related in a table , then only the self join can be performed 
+it takes time to execute the self join  (slow )
+in self join , there will 2 copies created for the same table
+if there is no 2 cols which are related in a table, self join  can not be performed.
+self join , can not be written for all the tables.
+
+--eg display the name the emp , their manager's name 
+select a.ename, b.ename manager
+from emp a, emp b
+where a.mgr=b.empno;
+
+emp 		emp
+a		b
+14 rec		14 rec
+
+--eg display the name the emp  and sal, their manager's name  and sal
+select a.ename,a.sal,  b.ename manager, b.sal mgr_sal
+from emp a, emp b
+where a.mgr=b.empno;
+
+--diff  between co related subquery and self join
+-eg co : senior to ur manager 
+in  co related subquery we can only display the details of the first copy of the table (a), we can not display the details about the second copy of the table (b), which is possible in self join.
+
+--non equi join 
+we use > < != , >= <= operator
+
+--eg display the pair of emp , doing the job but from different departments
+smith 	clerk	20	 JAMES      CLERK	30
+smith 	clerk	20	 miller     CLERK	10
+
+select a.ename, a.job, a.deptno, b.ename, b.job, b.deptno
+from emp a, emp b
+where  a.job=b.job and a.deptno!=b.deptno
+
+
+--DCL
+data contol lang
+grant , revoke
+grant : to grant the privileges / rights
+revoke  : to take back the privileges / rights
+
+
+user : hr			priti
+table : emp ------------------>
+
+grant all on emp to priti;
+grant select on emp to priti;
+grant select, insert, update on emp to priti;
+
+
+--privileges
+ select, insert,, update, delete, drop, truncate
+
+--
+revoke all on emp from priti;
+revoke select on emp from priti;
+
+
+--TCL
+transction control lang
+commit
+rollback
+savepoint
+
+
+--commit;
+it save the changes permenetly to the server
+
+
+--transaction 
+set of commands till you perform commit or rollback
+
+insrt
+insert
+commit;		--1st transaction 
+insert
+update
+select
+update
+commit;		--2nd transaction 
+insert
+select
+insert
+update
+select
+rollback;	--3rd transaction 
+
+==rollback
+to undo the transaction 
+
+commit;
+insert		...........no
+insert         ---------------no
+rollback;
+
+--eg
+commit
+insert		.... saved
+update		--saved
+delete	      --saved
+commit;
+insert		..no
+update		..no
+rollback;
+
+
+---set operators
+1 union
+2 union all
+3 intersect
+4 minus
+
+create table present_car(
+modelno  int,
+color varchar2(20));
+
+insert into present_car values(1,'red');
+insert into present_car values(2,'orange');
+
+
+create table sold_car(
+modelno  int,
+color varchar2(20));
+
+insert into sold_car values(1,'red');
+insert into sold_car values(3,'brown');
+
+--union 3
+select model_no, color from present_car
+union
+select model_no, color from sold_car
+
+--union all :4
+select model_no, color from present_car
+union all
+select model_no, color from sold_car
+
+--1: red
+select model_no, color from present_car
+intersect
+select model_no, color from sold_car
+
+--1 : orange 
+select model_no, color from present_car
+minus
+select model_no, color from sold_car
+
+-----------------------------------------------
+
+PL/SQL
+procedural lang 
+
+-why ?
+
+--features
+1 performance of the query is faster using pl/sql
+2 if condition can be performed
+3 loops  can be performed
+4 variables , defaults, constants  can be created
+5 exception handling  can be performed
+6 sub programs can be created
+	functions, procedures, triggers
+7 blocks can be created 
+8 cursors can be created 
+
+--block
+declare							:op
+	variables, cursor, defaults, constants
+begin
+	coding
+exception 						:op
+	error handling  
+end;
+
+---------------------------------------
+7------------------------> 1
+begin
+select
+insert
+update
+delete
+insert
+insert
+update
+end;
+
+block : dml(insert, update, delete), dql (select)   statements only
+
+select into dept1 values(...............);----1 
+
+--eg
+begin
+    dbms_output.put_line('Hello World !!!!!!!!!!!!!!!!!!');
+end;
+
+set serveroutput on
+
+dbms_output  : package
+put_line     : procedure inside this package
+
+--name , college name , stream , company name
+
+
+begin
+    dbms_output.put_line('Hello World !!!!!!!!!!!!!!!!!!');
+    dbms_output.put_line('Priti');
+    dbms_output.put_line('LTI');
+end;
+/
+
+--works
+begin
+    DBMS_OUTPUT.Put_line('Priti');
+    dbms_output.put_line('LTI');
+end;
+/
+
+--
+declare
+a number(3):=100;
+begin
+   dbms_output.put_line('the value of a is : ' || a);
+end;
+
+variables declared in pl/sql block is called as "bind variables " . 
+to initialize use := 
+
+--eg
+declare
+a number(3):=100;
+b number(3):=200;
+begin
+ dbms_output.put_line('the value of a is : ' || a);
+ dbms_output.put_line('the value of b is : ' || b);
+ dbms_output.put_line('the total is : ' || (a+b));
+end;
+
+--eg 
+eno 	number 
+ename	varchar2
+doj	date
+
+
+declare
+eno number(4):=1100;
+ename varchar2(20) :='Vaibhav';
+doj date:='1-aug-20';
+begin
+ dbms_output.put_line('the empno is : ' || eno);
+ dbms_output.put_line('the name  is : ' || ename);
+ dbms_output.put_line('the doj is : ' || doj);
+end;
+
+--store sal and comm of allen  in vsal and vcomm and display the same
+declare
+vsal number(4);
+vcomm number(7,2);
+begin
+   select sal, comm into vsal, vcomm from emp where ename='ALLEN';
+   dbms_output.put_line('salary of allen is ' || vsal); 
+   dbms_output.put_line('comm allen is ' || vcomm);   
+end;
+
+--accept a name from the user and display the sal and comm
+declare
+vsal number(4);
+vcomm number(7,2);
+vname varchar2(20);
+begin
+   --to accept the name
+   vname :='&name1';
+   select sal, comm into vsal, vcomm from emp where ename= vname;
+   dbms_output.put_line('salary of is ' || vsal); 
+   dbms_output.put_line('comm is ' || vcomm);   
+end;
+
+--loop
+1 normal loop
+2 while loop
+3 for loop
+
+--normal loop
+1,2,---------------------20
+
+declare
+a number(2):=1;
+begin
+   loop
+      dbms_output.put_line(a);
+      a:=a+1;
+   exit when a>10;
+   end loop;
+end;
+
+--eg
+declare
+a number(2):=1;
+begin
+   loop
+      dbms_output.put_line('priti ' || a || ' times');
+      a:=a+1;
+   exit when a>10;
+   end loop;
+end;
+/
+
+-- display first 10 even number
+2, 4,.............20
+declare  
+a number(2):=0;  
+begin  
+    loop  
+        dbms_output.put_line(a);  
+        a:=a+2;  
+    exit when a>20;  
+    end loop;  
+end;  
+
+-- display first 10 odd number
+
+declare  
+a number(2):=1;  
+begin  
+loop  
+dbms_output.put_line(a);  
+a:=a+2;  
+exit when a>20;  
+end loop;  
+end;
+
+--while loop
+1,2................... 10
+
+declare
+a number(2):=1;
+begin
+   while a<=10
+   loop
+       dbms_output.put_line(a);
+       a:=a+1;
+   end loop;
+end;
+
+--diff in normal loop and while 
+
+
+--display the first odd numbers using while
+declare  
+a number(2):=0;  
+begin  
+while a<10  
+loop  
+dbms_output.put_line(2*a+1);  
+a:=a+1;  
+end loop;  
+end;  
+/
+
+--display your name 10 times using while loop
+
+declare  
+a number(2) := 1;  
+begin  
+while a <= 10  
+loop  
+dbms_output.put_line('NIKHIL !!!!!!!!!!!');  
+a := a + 1;  
+end loop;  
+end;  
+/  
+
+
+--for loop
+1,2,...........................20
+fastest loop
+
+begin
+   for i in 1..10
+   loop
+      dbms_output.put_line(i);
+   end loop;
+end;
+
+begin
+   for i in 1..10
+   loop
+      dbms_output.put_line('Priti Dalvi');
+   end loop;
+end;
+
+--display 20 to 40
+begin  
+for i in 20..40  
+loop  
+dbms_output.put_line(i);  
+end loop;  
+end;  
+
+---reverse
+begin  
+for i in reverse 20..40
+loop  
+dbms_output.put_line(i);  
+end loop;  
+end;  
+
+---first 10 even number
+2,4,.............20
+
+begin  
+for i in 2..20
+loop  
+  if mod(i,2)=0 then
+     dbms_output.put_line(i);  
+  end if;   
+end loop;  
+end;  
+
+
+--odd
+begin  
+for i in 2..20  
+loop  
+	if mod(i,2)=0 then  
+		dbms_output.put_line(i);  
+	end if;  
+end loop;  
+end;  
+/  
+
+--accept 2 values from the user: name and sal , 
+declare
+vsal number(4);
+vcomm number(7,2);
+vname varchar2(20);
+vsal1 number(7,2);
+begin
+   vname :='&name1';
+   vsal1:=&salary;
+   select sal, comm into vsal, vcomm from emp where ename= vname and sal > vsal1;
+   dbms_output.put_line('salary of is ' || vsal); 
+   dbms_output.put_line('comm is ' || vcomm);   
+end;
+
+---
+
+create table 3 ............done
+selectquery3-------------done.................. today
++
+assginment
+1.assignment_alter 1		: 20
+2. Creation-Table_I		: 20
+
+
+tomorrow
+4. joins
+5. index_view
+6. Creation-Table_II
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

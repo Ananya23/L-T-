@@ -1,0 +1,474 @@
+q32, 19, 31, 33, 34, 40 ,24, 35-37, 23, 28
+
+ask the password : password 
+
+----------------------
+
+sql >connect hr
+pass : hr
+
+err: account locked
+
+--1  : login as super user
+sql >connect sys as sysdba
+pass : password
+
+or
+user name : sys as sysdba
+pass : password 
+
+o/p : connected
+
+--2
+sql>alter user hr
+identified by hr
+account unlock;
+
+--3
+sql>grant resource, connect to hr;
+
+sql>show user
+o/p : sys
+
+--4
+connect hr
+pass : hr
+o/p : connected 
+
+sql>show user
+o/p : hr
+
+
+--to the username
+show user
+
+--to exit
+exit
+
+--
+commit;
+
+ananya.ece98@gmail.com
+
+--for alining
+set linesize 180
+set pagesize 30
+select * from emp;
+
+--Normalization
+100 books
+2 emp
+
+
+20000 books
+10 emp
+
+mannual ----------------> automation (tables)
+follow Normalization
+
+--tables  : 10
+--each table : fileds, datatype
+--no repeatation
+--pk
+--fk
+
+
+--what is Normalization
+it is a data design technique
+it is conceptual 
+who : data designer, database architecture follow the Normalization process
+if do not use normalization , there will be update anomaly, insert  anomaly, delete anomaly
+when : this is followed before creating the tables
+
+--why ? it is followed to avoid data redundancy 
+using normalization we avoid update anomaly, insert  anomaly, delete anomaly
+the data will be correct , stable , reliable using normalization process.
+if the redundancy  is avoided the space used will be less
+speed : high
+
+--normal forms
+1NF		normal form   : values should be atomic / 1 value : 1 cell : 1 value
+2NF		
+   A relation is said to be in 2NF if and only if it is in 1NF and every non-key attribute is fully functionally dependent on the primary key.
+
+  pk : orderno +item no
+ 
+orderno item no 	qty 	price	custcode name 	address		city
+			yes	yes     no	no	no		no
+
+3NF  : Eliminate non-key fields that are transitively dependant on  key fields
+4NF
+5NF
+
+
+c1----->c2
+c2------>c3
+c1------->c3
+
+c1	c2	c3
+10	1	a
+20	2	b
+30	3	c
+10	1	a
+20	2	b
+30	3	c
+10	1	a
+
+
+-----------------------------------
+hunt assign
+BCNF	: boyce codd normal form
+
+
+
+
+
+
+
+
+
+
+
+t1
+empno  ename  	add 		sal
+1	priti	banglore 	70000
+2	tia	pune	 	50000
+
+t2		
+ename	add 	pan	email	adhar
+priti	mum	p0001	aaa	ffff
+tia	pune	p0002	bbb	dddd
+
+
+--priti ---------------> mum ------> banglore
+--if the cols are repeated : values will be repeated , info will not be consistance
+update anomaly
+insert  anomaly
+delete anomaly
+
+---
+create table dept1(
+deptno number(2),
+dname varchar2(20),
+loc varchar2(20));
+
+insert into dept1 values(10,'acct', 'mum'); 
+insert into dept1 values(20,'fin', 'mum');
+
+commit;
+
+select * from dept1;
+
+--to drop : drop the table along with the structure
+drop table dept1;
+
+select * from dept1;   ------------> error
+
+--diff between truncate and drop
+drop: drop the table along with the structure
+truncate  : all records are deleted but the structure remains, or structure is preserved
+
+c1	char(10)	: priti		: 10b		: fixed length		
+c2	varchar(10)	: priti		: 5b		: variable length
+
+--varchar:
+eg : fname, lname, mname, address
+
+--char:
+pancard, adharno, mobileno, pinno
+
+--diff in char and varchar
+
+--when to use char and varchar
+
+
+--datatypes
+char		: ch		: 2000b
+varchar		: ch		: 4000b
+varchar2	:ch		: 8000b
+date
+number
+int	
+long		: vch		: 2gb
+raw		: 2000b		: photo : 
+longraw		: 2gb		: photo
+
+
+LOB :
+large object
+BLOB		: 4GB		: binary large object : video  : is stored inside the database
+CLOB		: 4GB		: character large object :  reserch : character data 
+	: is stored inside the database
+Bfile 		: 4GB		: binary file 	: is stored outside the database
+		: doc, ppt, excel, pdf : diff device : directory alias 
+
+emp
+empno	int
+resume	bfile
+
+
+insert into emp values(1,pack1.insert(alias.amit.pdf));
+insert into emp values(1,pack1.insert(alias.sahil.pdf));
+
+
+2000000	resume : pdf
+
+d:\resume : 
+	amit.pdf
+	sahil.pdf
+	ananda.pdf
+
+----------------------------
+comments
+--sdfklskflsdf
+
+--built in functions
+1. numeric functions
+2. character functions
+3. date functions
+4. conversion functions
+
+
+--numeric functions
+select ceil(45.2) from dual;		--46
+select ceil(45.8) from dual;		--46
+select floor(45.2) from dual;		--45
+select sign(33) from dual;		--1
+select sign(-33) from dual;		-1
+select sign(33) from dual;		--0
+select power(2,4) from dual;		--16	
+select sqrt(144) from dual;		--12
+select round(1234.55,1) from dual;  	--1234.6
+select round(1234.54,1) from dual;  	--1234.5
+
+select round(1234.5412,2) from dual;  	--1234.54
+                  ---->
+select round(1234.5412,3) from dual;  --1234.541
+select round(1234.5412,0) from dual;  --1235
+select round(1244.5412,-1) from dual;	--1240   
+
+
+select round(1247.5412,-1) from dual;	 ----1250
+             <---
+select round(1247.5412,-2) from dual;	 ----1200
+select round(1247.5412,-3) from dual;	 ----1000
+select round(1250.5412,-2) from dual;    --1300
+
+select round(1234.5762,2) from dual;	--1234.58
+select trunc(1234.5762,2) from dual;	--1234.57
+
+select greatest(22,3,4,5,88,5) from dual;  --88
+select least(22,3,4,5,88,5) from dual;      --3
+
+--what is dual?
+it is a dummy table / system table
+which has 1 row and 1 col 
+
+desc dual
+select * from dual;
+
+--why dual ?
+it is used for the evaluation of 1. numeric functions, 2. character functions, 3. date functions
+
+--character functions
+select initcap('priti dalvi') from dual;
+select lower('Priti DALVI') from dual;
+select upper('priti dalvi') from dual;
+select ename , initcap(ename) from emp;
+
+select initcap(lower(upper('priti dalvi'))) from dual;
+select replace('priti','i','ee') from dual;	
+select substr('lit mahape', 1,3) from dual;
+1 :postion
+
+select substr('lit mahape', 5,3) from dual;
+
+--from ename extract the first 3 ch
+select substr(ename, 1,3) from emp
+
+--soundex : all alin  : ALLEN
+select ename from emp
+where soundex(ename)=soundex('alin'); 
+
+--padding stars
+select ename , lpad(ename, 10, '*') from dual;  
+
+select ename , rpad(lpad(ename, 10, '*') , 20, '@') from emp;  
+
+
+--to trim the spaces
+select '     priti   ' from dual;
+select ltrim('     priti   ') from dual     --to remove the spaces
+select rtrim('     priti   ') from dual
+select trim('     priti   ') from dual
+
+rpad
+lpad
+trim
+ltrim
+rtim
+instr		: to check the position of the character
+
+allen
+select ename, instr(ename,'L') from emp;
+select ename, instr(ename,'L',1,1) from emp;  --first occourance
+			      P O
+P :position
+O : occourance
+select ename, instr(ename,'L',1,2) from emp;  --second occourance
+
+--check for the position of R , display ename and the position 
+
+----------------------------------------
+select ename, instr(ename,'R',1,2) from emp;   --6
+select ename, instr(ename,'R',2,2) from emp;
+
+TURNER
+
+
+-------------------------------------------
+3. date functions
+1 sysdate 		: show the  current date
+
+select sysdate from dual;
+
+dd-mon-yy 
+
+--2
+select last_day(sysdate) from  dual;   --31-AUG-20
+select ename , last_day(hiredate) from  emp; 	--31-AUG-20
+
+--3
+select last_day(sysdate, '3-jan-20') from dual;  --31-AUG-20
+
+--4
+select add_months(sysdate , 2) from dual;
+
+--5
+select next_day(sysdate, 'MONDAY') from dual;
+  select next_day(sysdate, 'TUESDAY') from dual;;
+  select next_day(sysdate, 'FIRDAY') from dual;;
+
+--display the name of the emp and his experience in yrs
+ENAME 	expr(yr)
+smith 	5
+
+select ename , months_between(sysdate, hiredate) /12 from emp;
+
+select ename , round(months_between(sysdate, hiredate) /12 , 0) expr from emp;
+
+---4 conversion
+1 to_date()		: to convert into date datatype
+2 to_char()		: to format the date
+3 to_number()		: convert into number 
+
+--hunt assignment
+--nth highest
+name of emp 2nd highest salaried emp
+name of emp first two highest salaried emp
+
+--ananya.ece98@gmail.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

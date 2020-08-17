@@ -1,0 +1,663 @@
+--compare 2 cols
+create table sales_order(  
+s_order_no varchar(6) constraint s_order_no_pk30 primary key  
+constraint s_order_no_ck30 check(s_order_no like 'O%'),  
+s_order_date datetime,  
+client_no varchar(6) constraint client_no_fk30 references client_no(client_master),  
+dely_addr varchar(25),  
+salesman_no varchar(6)  
+constraint salesman_no_fk31 references salesman_no(salesman_master),  
+dely_type char(1) default 'F'  
+constraint dely_type_ck31 check(dely_type in('P','F')),  
+billed_yn char(1) default 'N'  
+constraint billed_yn_ck32 check(billed_yn in('Y','N')),  
+dely_date date  ,  
+order_status varchar(10)  
+constraint order_status_ck34 check(order_status in('in process','Fulfilled','BackOrder','Canceled')),
+constraint dely_date_ck33 check(dely_date>=s_order_date));
+
+---------------------------
+create table empleave(
+empno int ,
+st_date date,
+end_date date,
+constraint empno_st primary key(empno , st_date),
+constraint st_end_ck check(st_date <= end_date))
+
+--
+empno int constraint empno_pk primay key,   --col level constraint
+constraint empno_st primary key(empno , st_date))   --table level constraint
+alter  : constraint -- --table level constraint
+
+empleave
+empno	st_date		end_dt
+1	1-jan-20	1-jan-20
+2	1-jan-20	1-jan-20
+1	10-mar-20	20-mar-20
+
+pk : empno+ st_date
+st_date <=end_date
+
+--9. Display the 3rd highest salary in the emp table
+dense_rank
+
+--eg
+select ename , sal, dense_rank() over (order by sal desc) rank
+from emp
+
+
+--
+select ename ,sal from 
+(select ename , sal, dense_rank() over (order by sal desc) rank
+from emp)
+where rank=3;
+
+--first 3
+select ename ,sal from 
+(select ename , sal, dense_rank() over (order by sal desc) rank
+from emp)
+where rank<=3;
+
+condition mgr is null
+
+------------------------------------------------------------------------------
+user defined functions
+it will returns a value
+will always have a parameter
+it is used for storing a complex expression 
+allow only dql statements
+dml is not allowed
+
+--eg
+create or replace function cuble_fun(a number)
+return number is
+begin  
+   return a*a*a;
+end ;
+
+--to exe
+select cuble_fun(4) from dual;
+
+--eg2 create a function to accept a deptno from the user and returns total number of emp 
+i/p: 
+create or replace function fun_totemp(pdno number)
+return number
+is
+totemp number(3);
+begin
+   select count(*) into totemp from emp where deptno=pdno;
+   --dbms_output.put_line('total emp are :' || totemp);
+   --update emp set sal=sal+1000; : err
+   return totemp;
+end;
+
+
+--
+select 'total emp are :' || fun_totemp(10) from dual;
+
+--drop func
+drop function fun_totemp; 
+
+--diff between procedure and function:
+procedure: used for procession the data 
+function: used for storing a complex expression 
+
+procedure:  dql, dml allowed 
+function: only dql is allowed
+
+procedure:   may or may not have parameters
+function:  there should at least 1 parameter
+
+procedure:   may or may not return the value
+function: will always return 1 value
+
+procedure:  no return statment
+function: will always have return statment
+
+procedure:  to execute we have "exec " command
+function : to execute we have "select  " command
+
+
+--package
+--what
+collection of realted variables, constants, defaults, functions, procedures, exceptions, cursors
+
+--why
+granting the package easy
+understanding is easy
+modifications will be easy of 1 procedure of a package
+
+user: vaibhav		priti (50)
+			pack1
+			fun1
+			fun2
+			fun3
+			proce1
+			proce2
+
+					emp
+					 |
+		-------------------------------------------------------
+		|			|				|
+		hr			mkt				fin
+		packhr			packmkt				packfin
+		
+package consist of 
+1. package specification
+    variables, constants, defaults, 
+    name of functions, return type of the function and the parameters
+    name procedures  and the parameters
+
+2. package body
+   coding
+
+--eg
+--1 fun
+create or replace function fun_totemp(pdno number)
+return number
+is
+totemp number(3);
+begin
+   select count(*) into totemp from emp where deptno=pdno;
+   return totemp;
+end;
+
+--1 proce
+create procedure proce12
+as
+vsal varchar2(20);
+begin
+   select sal into vsal from emp where ename ='KING';
+   dbms_output.put_line('the sal of king is : ' || vsal);
+end;
+
+--package specification
+create or replace package pack1
+is
+function fun_totemp(pdno number) return number;
+procedure proce12;
+end pack1;
+/
+
+--package body
+create or replace package body pack1
+is
+function fun_totemp(pdno number)
+return number
+is
+totemp number(3);
+begin
+   select count(*) into totemp from emp where deptno=pdno;
+   return totemp;
+end fun_totemp;
+procedure proce12
+as
+vsal varchar2(20);
+begin
+   select sal into vsal from emp where ename ='KING';
+   dbms_output.put_line('the sal of king is : ' || vsal);
+end proce12;
+end pack1;
+
+--to exe a function 
+select pack1.fun_totemp(20) from dual;
+
+--to exe a procedure
+exec pack1.proce12
+
+-------------------------------------------
+
+--exceptions
+error handling can be performed
+user can display the user defined error messages using handling exceptions
+
+--exceptions types
+1. predefined exceptions
+2. user defined exceptions
+
+
+--why:
+user can provide own err msg
+
+--predefined exceptions
+--eg
+declare
+vsal varchar2(20);
+begin
+   select sal into vsal from emp where ename ='Sahil';
+   dbms_output.put_line('the sal is : ' || vsal);
+exception
+  when no_data_found then
+    dbms_output.put_line('there is no employee with the given name');
+end;
+
+--eg   : value_error  : 
+declare 
+a number(2);
+begin
+  a:=10000000000;
+  dbms_output.put_line(a);
+exception 
+  when value_error then
+    dbms_output.put_line('the size given is too small!!!!!!!!!!!!!!!!!!');
+end;
+
+
+--eg3  : too_many_rows
+declare
+vsal varchar2(20);
+begin
+   select sal into vsal from emp where deptno=10;
+   dbms_output.put_line('the sal is : ' || vsal);
+exception 
+  when too_many_rows then
+    dbms_output.put_line('Err: the query fetches many rows!!!!!!!!!!!!!!!!');
+  when no_data_found then
+    dbms_output.put_line('Err: there is no employee with the given deptno !!!');
+  when others then
+  dbms_output.put_line('Err: there is an err');
+end;
+
+
+-- zero_divide
+declare
+a number(4);
+res number(2);
+begin
+  a:=100;
+  res:=a/0;
+  dbms_output.put_line(res);
+--exception 
+  --when zero_divide then
+    --dbms_output.put_line('Err: can not divide any number by zero !!!!!!!!!!!!!');
+end;
+
+-----------------------------------------------
+exception
+  when no_data_found then
+    dbms_output.put_line('there is no employee with the given name');
+---------------
+
+declare
+vsal varchar2(20);
+begin
+   select sal into vsal from emp where ename ='Sahil';
+   dbms_output.put_line('the sal is : ' || vsal);
+exception
+  when no_data_found then
+    dbms_output.put_line('sqlcode is :' || sqlcode);
+    dbms_output.put_line('sqlerrm is :' || sqlerrm);
+    dbms_output.put_line('there is no employee with the given name');
+
+end;
+
+sqlcode : err no : ORA-1860
+
+-----------------------------
+
+
+--properties of err
+1 error number
+2 error message
+3 error code
+
+
+sqlcode
+sqlerrm
+
+--
+declare
+dob date;
+begin
+   dob :='30-feb-20';
+   dbms_output.put_line('dob  is '|| dob );
+exception 
+  when others then
+    dbms_output.put_line('sqlcode is :' || sqlcode);
+    dbms_output.put_line('sqlerrm is :' || sqlerrm);
+    dbms_output.put_line('Err : invalid date');
+end;
+
+o/p : ORA-01839: date not valid for month specified
+
+sqlcode :returns the err number
+sqlerrm : returns the err msg
+
+-----------------------------------------------------
+Trigger
+are the sub programs which are automatically executed , when the dml (insert, update, delete)operation occurs    
+
+--types
+1 insert Trigger
+2 update Trigger
+3 delete Trigger
+4. row level Trigger	: for each row  : slow
+5 statement level trigger  :default :  fast 
+6 before Trigger
+7 after Trigger
+8 database Trigger : startup, shutdown : server 
+
+--if : for each row  is present : it is row level trigger else it is  statement level trigger " statement level trigger" executed only once, not for each row
+
+
+
+--why Trigger?
+1 used for security purpose  : do not allow the user to delete the record
+2 it used to check the complex conditions : emp  
+    deptno	 sal 
+    10		10000-100000
+    20		20000-200000
+    30		30000-300000
+   ...
+
+
+    sal number(10,2)  constraint sal_ck check(sal between 10000 and 100000)
+3 used for auditing
+    user1 		: emp i, u, del  : time  
+    user 2, 
+    user3
+       
+
+4 logs can be created
+      
+5 redirect the information to another table
+	emp -------------> update     
+	empno	ename 	sal
+	1	priti	5000
+	2	uma	4000
+  
+	sal_history   <---------------insert  
+	empno 	oldsal	newsal
+	1	3000	5000
+
+        product
+	pid	reorderlevel   qty	price
+	1	200		150	4000
+
+	order
+	orderid	pid 	no_item		tot
+	o1	1	150		...	
+	02	1	50		..
+
+
+
+
+
+
+
+
+
+--1 used for security purpose
+create table dept2(
+deptno int,
+dname varchar2(20),
+loc varchar2(20));
+
+insert into dept2 values(10,'acct', 'mum');
+insert into dept2 values(20,'fin', 'mum');
+insert into dept2 values(30,'adm', 'mum');
+ commit;
+
+--eg
+create or replace trigger tr_dept2
+before delete on dept2
+begin
+    raise_application_error(-20201,'Err : can not delete a record !!!!!!!!!!!!!');
+end;
+
+--
+create or replace trigger tr_dep2
+before delete on dept2
+begin
+    if to_char(sysdate, 'dy') in ('sat','sun') then
+      raise_application_error(-20201,'Err : can not delete a record !!!!!!!!!!!!!');
+    end if;
+end;
+
+--to exe
+delete from dept2 where deptno=30;
+
+--1 trigger for all the operations
+create or replace trigger tr_dept2
+before update or delete or insert  on dept2
+begin
+    raise_application_error(-20201,'Err : can not delete a record !!!!!!!!!!!!!');
+    --                      err no  , err msg
+end;
+
+--to generate an err / exeception 
+ raise_application_error(-20201,'Err : can not delete a record !!!!!!!!!!!!!')
+		           1  , 2
+1 : err number
+	-20001  to -20999		: range 
+
+2: err msg
+
+===================
+
+alter trigger tr_dep2 disable;
+
+alter trigger tr_dep2 enable ;
+
+drop trigger tr_dept2;
+
+===============================
+
+-- redirect
+		emp----------------->sal_history
+		update 	-------------> insert
+		oldsal
+		newsal
+
+--predicates
+:new.sal		:new.ename
+:old.sal		:old.ename
+
+	emp -------------> update     
+	empno	ename 	sal
+	1	priti	3000-------> 5000
+	2	uma	4000
+  
+	sal_history   <---------------insert  
+	empno 	oldsal	newsal
+	1	3000	5000
+
+create table sal_history(
+empno number(4),
+old_sal number(10,2),
+new_sal number(10,2) );
+
+create or replace trigger tr_emp_up 
+after update of sal on emp for each row
+begin
+   if updating then 
+      insert into sal_history values(:old.empno,:old.sal, :new.sal );
+   end if;
+end;
+
+--to exe  : 1300 		2300
+update emp set sal=sal+1000 where ename ='MILLER';
+
+--
+select * from sal_history;
+
+========================================
+
+emp dml ----------------> log_table
+i	----------------> i
+u    -------------------> i
+d    -------------------> i
+
+create table log_table(
+username varchar2(20),
+tablename varchar2(20),
+operation char(1),
+actiondate date)
+
+log_table
+username 	tablename 	operation 	actiondate 
+  hr		emp		I		7-aug-20
+  hr		emp		U		7-aug-20
+  hr		emp		D		7-aug-20
+
+
+
+create or replace trigger tr_logs1 
+after update or delete or insert on emp for each row 
+begin 
+if updating then 
+	insert into log_table values (user, 'emp','U', sysdate); 
+elsif deleting then 
+	insert into log_table values (user, 'emp', 'D', sysdate); 
+elsif inserting then 
+	insert into log_table values (user,'emp', 'I', sysdate); 
+end if; 
+end;
+
+--to exe
+insert into emp (empno, ename, sal) values (12,'faisal', 40000);
+update emp set sal=sal+ 1000 where ename ='MILLER';
+delete from emp where ename='faisal';
+
+select * from log_table;
+
+-----------------------------------------------------------------------------
+--cursor
+dynamic allocation of memory, store the records
+
+--types of cursor
+1 implicit cursor
+	it is used by the orcle application by itself
+	name : SQL
+	it is used when we perform dml, dql operations
+
+2 explicit cursor
+	used by user
+
+--steps
+1 declare
+2 open
+3 fetch
+4 close
+
+--attributes:
+1 %found		: t/f
+2 %notfound		: t/f
+3 %isopen		: t/f
+4 %rowcount		: counts the number of records in cursor
+
+--implicit cursor
+declare
+begin
+   insert into dept2 values(50,'sales', 'bang');--update, delete, select
+   if SQL%found then
+       dbms_output.put_line('this is my implicit cursor !!!!');
+   end if;
+   	dbms_output.put_line('the total count in cursor is ' || SQL%rowcount);
+end;
+
+
+
+-- update loc =che
+
+declare  
+begin  
+update dept2 set loc = 'PATNA' where loc='mum';  
+if SQL%found then  
+dbms_output.put_line('This is my implicit cursor!!!');  
+end if;  
+dbms_output.put_line('This is total cursor: '||SQL%rowcount);  
+end;  
+/
+
+--explicit cursor
+handled by the user
+
+
+--why?
+plsql block fails , when it fetch multiple records.
+if you want to fetch multiple records and process each record separately , we need to use explicit cursor.
+
+--steps
+1 declare
+2 open
+3 fetch
+4 close
+
+--works
+declare
+vsal number(10,2);
+begin
+select sal into vsal from emp where ename='MILLER' ;
+dbms_output.put_line(vsal);
+end;
+/
+
+--fails
+declare
+vsal number(10,2);
+begin
+select sal into vsal from emp  ;
+dbms_output.put_line(vsal);
+end;
+/
+
+--eg
+declare
+cursor c1 is select * from emp; --1
+vrec emp%rowtype;
+begin
+	open c1;   --2
+        loop
+           fetch c1 into vrec;  --3
+ 	   exit when c1%notfound;
+               dbms_output.put_line(vrec.ename || ' earning is ' || vrec.sal || ' and comm is ' || vrec.comm);
+	end loop;
+        
+	close c1;    --4
+end;
+
+--eg2
+10	10%
+20	20%
+30	30%
+
+declare
+cursor c1 is select * from emp; --1
+vrec emp%rowtype;
+begin
+	open c1;   --2
+        loop
+           fetch c1 into vrec;  --3
+              if vrec.deptno=10 then 
+                 update emp set sal=sal+sal*.1 where empno=vrec.empno;
+ 	      end if;
+	     if vrec.deptno=20 then 
+                 update emp set sal=sal+sal*.2 where empno=vrec.empno;
+ 	      end if;
+ 	   exit when c1%notfound;
+               
+	end loop;
+	close c1;    --4
+end;
+
+3450
+6000
+	4300
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

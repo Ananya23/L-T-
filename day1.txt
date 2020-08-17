@@ -1,0 +1,1031 @@
+--oracle
+
+what is oracle?
+it is a database..
+
+why we use database? 
+to store huge amt of the data 
+
+--what is data?
+raw data  
+
+
+1001 
+2020
+tia
+hello
+
+---what is  information ?
+related data, meaningful data : 
+name, empnumber, sal
+
+priti
+1001
+30000
+
+--table
+collection of rows / records
+
+dept
+deptno		dname		loc
+10		acct		mum
+20		fin		mum
+30		adm		bang
+
+
+emp : 10000
+columns : attributes
+rows: tuples
+
+dept: 10
+emp : 10000
+
+emp		10000
+empno 
+ename
+address
+email
+mobile
+pan
+
+salary		: 200000
+empno
+month
+basic
+hra
+da
+allow
+
+
+project		100
+projid
+tech
+st_date
+end_dt
+no_team
+
+travel 		2000
+
+100 tables 
+
+--what is database ?
+collection of related information 
+
+collection of all tables
+
+					database
+ 					 |
+  -------------------------------------------------------------------------------------------------
+  |			|			|		|			        |
+ oracle		    ms sql server       	mysql         mongodb			   cassandra
+  
+
+ oracle		.    ms sql server    ,   	mysql    : RDBMS (ralational database management system)	
+ mongodb			   cassandra     	 : NOSQL (not only sql)
+
+
+---------------------------------------
+1. flat file system
+store the data : word, excel 
+
+dis adv : 
+1. there is no ralation in files maid
+2. duplications
+
+
+2. DBMS:
+database management system
+eg :
+foxpro
+foxbase
+clipper
+
+--adv DBMS :
+1. primary key
+2. unique key 
+3. DBA role ()
+   database administrator
+	--functions of dba
+	1. create user
+	2. change the password
+	3. drop the user
+	4. grant privileges to the user
+	5. memory management
+
+--dis adv DBMS
+no foreign key
+lot of duplication of the data
+can not relate the the two files
+memory requirement is more
+speed low
+
+
+3. RDBMS
+relational database mangement system
+
+relational  : table
+
+--eg
+oracle
+sybase
+ms sql server
+mysql
+postgre
+ingress
+infomix
+ms access
+..
+
+
+--versions
+oracle 7.3
+oracle 8i
+oracle 9i
+oracle 10g
+oracle 11g
+oracle 12c
+oracle 13c
+
+
+--adv RDBMS
+1. primary key
+2. unique key
+3. foreign key .................... relate the tables
+4. no duplication of the data
+5. memory requirement : low
+6. speed : high
+
+--------------------------
+
+ORBMS : object oriented rdbms
+
+--keys:
+1 primary key /super key / natural key
+2 unique key
+3 foreign key
+4 candidate key
+5 alternate key
+6 composite key
+
+
+--primary key :
+identity of a row and it is not null
+which is not duplicated
+
+eg empno in emp table
+custno 			: customer
+roll			: student
+deptno			: dept
+
+dept
+deptno		dname		loc
+10		acct		mum
+20		fin		mum
+30 		adm		null
+
+--what is null ?
+unknown, value is missing
+
+
+--unique key
+which is not duplicated, value is unique
+can be null
+eg
+
+emp
+empno			: 	PK
+ename			
+pan			: 	UK
+email			: 	UK
+mobile			: 	UK
+add
+adhar			: 	UK
+divno			: 	UK
+
+--diff pk and uk
+1. pk can not null , uk can be null
+2. pk : 1 col , uk constraint can be given for multiple cols
+
+----------------------------------------------------------------------
+
+--foreign key
+dept
+deptno		: pk
+dname
+loc
+
+
+dept		: master table : pk
+deptno		dname		loc
+10		acct		mum
+20		fin		mum
+30		adm 		bang
+40		mkt		bang
+
+
+emp		: transaction table   : fk
+empno		:pk 
+ename
+deptno		: fk 
+sal
+hra
+
+
+emp
+empno	ename	deptno	sal	hra
+1001	priti	10	30000	10000
+1002	anu	20	40000	11000
+1003	tia	20	44000	12000
+
+--fk
+it is a key inside a table which is pk of another table
+we can create relationship in 2 tables using fk
+fk can be duplicated
+can be null
+
+
+--diff in fk and pk
+pk : can not be duplicated, fk can be
+pk can not be null , fk can be 
+
+--candidate key
+fields /cols where the data is not repeating , can not be null, can not repeat the values
+3 candidate key :deptno		dname		loc   : 3
+fields capable of being pk
+
+dept		
+deptno		dname		loc
+10		acct		mum
+20		fin		pune
+30		adm 		bang
+40		mkt		hyd
+
+pk : deptno
+ak : dname		loc : alternate key   : 3-1 =2
+
+
+--composite key
+pk which is combination of 2 or more cols
+
+empleave
+empno		st_date		end_date
+1		10-jan-20	10-jan-20
+2		10-jan-20	10-jan-20
+1		12-feb-20	14-feb-20
+
+pk : empno + st_date 	: composite key
+
+
+--master table
+main table
+dept table : 3 rec 
+we do not have the insert, udpate, delete operations frequetly 
+
+
+
+--transaction table
+emp table
+we have the insert, udpate, delete operations frequetly 
+
+--diff lang
+DDL : data definition lang  : create, alter, drop, truncate
+DML : data manipulation lang :  insert, udpate, delete 
+DQL : data query lang  : select
+DCL : data control lang : grant, revoke
+TCL :  transaction control lang : commit, rollback , savepoint 
+
+
+--oracle session
+client m/c
+
+
+--oracle  instance
+server m/c
+
+
+--models
+diagram
+
+--relationships
+1 one to one  
+2 one to many / many to one
+   dept --emp
+3 many to many
+   
+
+--diff models
+1. Hierarchical model
+tree dia
+parent -child record
+easy to understant 
+ one to one ,  one to many : possible
+can not use many to many relationship
+
+ 
+2. network model
+links will be present
+join to diff nodes
+ one to one ,  one to many , many to many: possible
+eg : traffic, join cities, nodes, areas 
+
+--dis adv
+structure is complex if the records are more
+
+
+3. relational model
+RDBMS :
+tables
+fk , pk, uk
+ one to one ,  one to many , many to many: possible
+easy to understand
+
+-------------------------------------------------
+
+SQL : structured query lang
+lang all the db
+
+--practicals
+create table dept1(
+deptno number(2) ,	
+dname varchar2(20) , 
+loc varchar2(20) );
+
+
+--to check the structure of the table 
+desc dept1
+or
+describe dept1
+
+dept1		
+deptno		dname		loc
+10		acct		mum
+20		fin		pune
+30		adm 		bang
+40		mkt		hyd
+
+
+--to insert a record
+insert into dept1 values(10, 'acct', 'mum');
+                
+insert into dept1 values(20, 'fin', 'pune');
+insert into dept1 values(30, 'adm', 'bang');
+insert into dept1 values(40, 'mkt', 'hyd');
+
+select * from dept1;
+
+----------------------------
+
+--change the value / update
+update dept1
+set loc='cal'
+where deptno=20;
+
+--change the department name as marketing for deptno 40
+
+update dept1  
+set dname='marketing'  
+WHERE deptno=40;
+
+--change the location to pune for fin department
+UPDATE dept1  
+set loc ='pune'
+where dname='fin';
+
+create table emp1(
+empno number(4),
+ename varchar2(20),
+sal number(10,2),
+comm number(10,2),
+deptno number(2))
+
+insert into emp1 values(10, 'priti', 40000, 10000, 10);
+insert into emp1 values(12, 'priya', 40000, 10000, 10);
+
+select * from emp1;
+
+--
+sal number(10,2)
+10 : precision : p  :
+2 :    scale  : s : decimals
+
+
+4570.55     number(6,2)
+123488.45   number(8,2)
+
+--change the name as Uma of the first record , for empno 10
+
+--delete the record for empno 12
+delete from emp1 
+where empno=12
+
+select * from emp1;    
+insert into emp1 values(12, 'priya', 40000, 10000, 10);
+
+--truncate  command
+deletes all the records , but the structure remains
+
+truncate table emp1;
+
+
+--diff between delete and truncate
+delete  :		dml
+truncate : 		ddl
+
+delete  : deletes 1 record at a time 
+truncate : will delete all the records (100)
+
+delete  : can rollback
+truncate :  can not rollback
+
+delete  :
+truncate : faster
+
+delete  : can use where clause
+truncate :  can not use where 
+
+delete :    trigger can be used
+truncate : can not use triggers
+
+--to connect to oracle
+connect username
+
+connect hr
+password : hr
+
+--to exit the session
+exit
+
+create table emp1(
+empno number(4),
+ename varchar2(20),
+sal number(10,2),
+comm number(10,2),
+deptno number(2));
+
+insert into emp1 values(10, 'priti', 40000, 10000, 10);
+insert into emp1 values(12, 'priya', 40000, 10000, 10);
+
+
+--to clear the screen
+cl scr
+
+select * from emp1;
+
+desc emp1
+
+truncate table emp1;
+
+--truncate  command
+deletes all the records , but the structure remains
+
+truncate table emp1;
+desc emp1		
+
+delete from emp1;
+
+---
+insert into emp1 values(10, 'priti', 40000, 10000, 10);
+insert into emp1 values(12, 'priya', 40000, 10000, 10);
+
+
+--TCL
+commit;		: store the the details permenetly on the server, the changes will be reflected to ur session, and the other sessions.
+   
+insert into emp1 values(13, 'Vaibhav', 60000, 10000, 10);
+
+rollback;		: undo the transaction : will effect the dml command : insert, update and delete
+
+select * from emp1;		: 2 rec
+
+ddl comamnds : autocommit : 
+create, alter, drop , truncate
+
+-- commit : need to be give : dml : insert , update, delete 
+
+--delete can be rollback but not truncate
+		
+--to see all the tables
+select * from tab;
+
+--command terminators
+;    : on the same line or next line
+/    : next line
+
+--clause
+1 from 			: table name
+2 where			: condition
+3 group by		: grouping
+4 having		: condition
+5 order by		: sorting 
+
+-------------------------------------------------------
+CREATE TABLE EMP
+       (EMPNO NUMBER(4) NOT NULL,
+        ENAME VARCHAR2(10),
+        JOB VARCHAR2(9),
+        MGR NUMBER(4),
+        HIREDATE DATE,
+        SAL NUMBER(7, 2),
+        COMM NUMBER(7, 2),
+        DEPTNO NUMBER(2));
+
+
+INSERT INTO EMP VALUES
+        (7369, 'SMITH',  'CLERK',     7902,
+        '17-DEC-1980',  800, NULL, 20);
+INSERT INTO EMP VALUES
+        (7499, 'ALLEN',  'SALESMAN',  7698,
+        '20-FEB-1981',  1600,  300, 30);
+INSERT INTO EMP VALUES
+        (7521, 'WARD',   'SALESMAN',  7698,
+        '22-FEB-1981', 1250,  500, 30);
+INSERT INTO EMP VALUES
+        (7566, 'JONES',  'MANAGER',   7839,
+        '2-APR-1981',  2975, NULL, 20);
+INSERT INTO EMP VALUES
+        (7654, 'MARTIN', 'SALESMAN',  7698,
+        '28-SEP-1981', 1250, 1400, 30);
+INSERT INTO EMP VALUES
+        (7698, 'BLAKE',  'MANAGER',   7839,
+        '1-MAY-1981',  2850, NULL, 30);
+INSERT INTO EMP VALUES
+        (7782, 'CLARK',  'MANAGER',   7839,
+        '9-JUN-1981', 2450, NULL, 10);
+INSERT INTO EMP VALUES
+        (7788, 'SCOTT',  'ANALYST',   7566,
+        '09-DEC-1982', 3000, NULL, 20);
+INSERT INTO EMP VALUES
+        (7839, 'KING',   'PRESIDENT', NULL,
+        '17-NOV-1981',  5000, NULL, 10);
+INSERT INTO EMP VALUES
+        (7844, 'TURNER', 'SALESMAN',  7698,
+        '8-SEP-1981',  1500, NULL, 30);
+INSERT INTO EMP VALUES
+        (7876, 'ADAMS',  'CLERK',     7788,
+        '12-JAN-1983',  1100, NULL, 20);
+INSERT INTO EMP VALUES
+        (7900, 'JAMES',  'CLERK',     7698,
+        '3-DEC-1981',    950, NULL, 30);
+INSERT INTO EMP VALUES
+        (7902, 'FORD',   'ANALYST',   7566,
+        '3-DEC-1981',  3000, NULL, 20);
+INSERT INTO EMP VALUES
+        (7934, 'MILLER', 'CLERK',     7782,
+        '23-JAN-1982',  1300, NULL, 10);
+
+
+CREATE TABLE DEPT
+       (DEPTNO NUMBER(2),
+        DNAME VARCHAR2(14),
+        LOC VARCHAR2(13) );
+
+INSERT INTO DEPT VALUES (10, 'ACCOUNTING', 'NEW YORK');
+INSERT INTO DEPT VALUES (20, 'RESEARCH',   'DALLAS');
+INSERT INTO DEPT VALUES (30, 'SALES',      'CHICAGO');
+INSERT INTO DEPT VALUES (40, 'OPERATIONS', 'BOSTON');
+
+--where    : condition
+select * from dept 
+where deptno > 10;
+
+-- relational / comparison oprator
+>
+<
+>=
+<=
+!=
+<>
+^=
+
+select dname, loc from dept; 
+
+--display the name of the emp and the salary of emp
+select ename , sal  from emp;
+
+--display the name of the emp and the salary of emp, change the heading of sal as salary
+select ename , sal  Salary from emp;
+select ename , sal as Salary from emp;
+select ename , sal  'Salary is' from emp;
+
+--display name and comm of emp, change the ename as name and comm as commission
+select ename , comm Commission from emp;
+
+
+--display department name and location, change heading as name and location 
+select dname, loc Location from dept
+
+
+--display name and comm of emp,for sal > 1000 
+select ename , comm, sal from emp
+where sal >= 1000
+
+--display name of emp and comm of emp, for all manager 
+select ename , comm from emp 
+where job='MANAGER';  
+
+---display SAL and comm of emp for smith
+select sal , comm from emp 
+where ename ='SMITH'
+
+---display SAL and comm  FOR emp , WHO has joined after 1 january 1981 
+select sal , comm from emp 
+where hiredate > '1-jan-1981'
+
+--date format
+dd-mon-yyyy
+
+
+--display name of emp and comm of emp, for designation other than manager 
+select ename , comm , job from emp 
+where job!='MANAGER';  
+
+select ename , comm from emp 
+where job<>'MANAGER';  
+
+select ename , comm from emp 
+where job^='MANAGER';  
+
+select ename , comm from emp 
+where not job='MANAGER';  
+
+--display the deptno from emp
+select deptno from emp
+
+--display the unique deptno from emp : supress the duplications
+select distinct deptno from emp
+
+--display  unique job from emp 
+select distinct job from emp
+
+--airthmatical operators
++
+-
+*
+/
+
+--display name of emp , sal and increse the salary by 500, lable as newsal
+select ename, sal , sal+500 as newsal from emp;  
+
+--display name of emp , annual sal, lable as annsal
+select ename, sal, sal *12 'Annual Salary' from emp;
+
+--display name of emp , sal and comm, and the total sal lable as totsal
+select ename, sal, nvl(comm, 0) , sal+ nvl(comm,0) from emp
+
+nvl(comm, 0)		: convert the null value to 0
+nvl is used to change the null value to be 0 
+    col , value
+
+--
+select ename, sal, nvl(comm, 1500) , sal+ nvl(comm,1500) from emp
+
+
+*   : 1
+
+----display name of emp , total annual sal, lable as totsal
+select ename,  (sal+ nvl(comm,0))*12 as totsal from emp
+
+--logical operator
+and 
+or
+not
+
+--3
+--display name of emp for which the desg manager and sal > 1000
+select ename from emp where job ='MANAGER' and sal > 1000
+
+--11
+select ename from emp where job ='MANAGER' or sal > 1000
+
+--display name of emp for which the desg manager and sal > 1000 and hiredate > '17-dec-80'
+select ename from emp where job ='MANAGER' and sal > 1000 and hiredate > '17-dec-80' or
+deptno=10
+
+
+select ename from emp where job ='MANAGER' and sal > 1000 or hiredate > '17-dec-80' and  not
+deptno=10
+
+--hierarchy of the logical op
+1not
+2and 
+3or
+
+c1   and  c2	or c3 not c4
+		     ---1  ---
+---2 -------	  
+----3-------------------------
+
+-- display the name, job, deptno  of the emp for deptno 10 , with all salesman  and emp from deptno 20 with all analyst
+
+select ename , job, deptno from EMP 
+where (deptno=10 and job='SALESMAN') or (deptno=20 and job='ANALYST');
+
+--predicates
+1 like		: pattern to search
+2 between	: range
+3 in 		: exact values
+
+--in
+-- display the details of smith, miller, jones
+select * from emp
+where ename ='SMITH' or ename ='MILLER' or ename ='JONES' 
+
+--USING in
+select * from emp
+where ename in ('SMITH' ,'MILLER' ,'JONES' );
+
+-- display the details of emp other than smith, miller, jones
+select * from emp
+where ename not in ('SMITH' ,'MILLER' ,'JONES' );
+
+-- display the details of emp from dept 10, 20
+select * from emp
+where deptno in (10, 20) 
+
+--display the details of emp , joined on 17-DEC-1980, or 20-feb-1981
+
+
+--between predicate : range
+--display name of emp , who are earing sal between 1000 and 2000
+select ename from emp
+where sal >=1000 and sal <=2000
+
+
+select ename from emp
+where sal between 1000 and 2000
+
+--
+select ename from emp
+where sal not between 1000 and 2000
+
+--display name of emp , who have joined in yr 1981
+select ename from emp
+where hiredate between '1-jan-1981' and '31-dec-1981'
+
+--like predicate
+--wild characters
+%	: 0 or more ch
+_	: 1 ch
+
+
+--display the name of emp , starting with A
+select ename from emp
+where ename like 'A%'
+
+--display the name of emp , ending with R
+select ename from emp
+where ename like '%R'
+
+--display the name of emp , anywhere there should be A
+select ename from emp
+where ename like '%A%'
+
+--3rd ch r followed by any letter
+select ename from emp
+where  ename  like '__R%'
+		
+--only 5 ch
+select ename from emp
+where ename like '_____'
+
+--3rd and 6th ch r
+select ename from emp
+where ename like '__R__R'
+
+
+--------------------------------------------------------------------------------------------------
+--topics
+1. normalization
+2. data types
+3. built in functions
+4. subquery
+5. constraints
+
+
+comm=1000
+comm=2000
+where comm is null
+
+
+
+--solution
+1. qu
+ans : sdfskdflksd
+
+2. qu
+ans : slkdflskdfl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+		
+
+
+
+
+
+
+
